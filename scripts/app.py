@@ -10,310 +10,249 @@ import time
 # Page Configuration
 # -----------------------------
 st.set_page_config(
-    page_title="SpaceSafety AI",
-    page_icon="🛡️",
-    layout="centered",
-    initial_sidebar_state="collapsed"
+    page_title="SpaceSafety AI | Professional Dashboard",
+    page_icon="�️",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # -----------------------------
-# Custom Styling (Mobile-App Like Design)
+# Custom Styling (Glassmorphism Professional Website)
 # -----------------------------
 st.markdown("""
     <style>
-        /* Import Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        /* Import Font */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap');
         
-        /* Base Styles - Dark Mode Force */
+        /* Main Container Background - Light Sky Blue Gradient */
         .stApp {
-            background-color: #0d1117;
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            font-family: 'Outfit', sans-serif;
         }
-        
-        /* Remove default Streamlit padding/header */
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            max-width: 500px; /* Mobile width simulation */
-        }
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
 
-        /* Header Section */
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        .app-title-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .app-icon {
-            font-size: 2rem;
-            background: #161b22;
-            padding: 8px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .title-text {
-            color: #ffffff;
-            font-size: 1.2rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-        .subtitle-text {
-            color: #8b949e;
-            font-size: 0.8rem;
-            font-weight: 400;
-        }
-        .status-badge {
-            background-color: #1a2e1f;
-            color: #3fb950;
-            padding: 4px 12px;
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid rgba(63, 185, 80, 0.2);
-            margin-top: 8px;
-        }
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #3fb950;
-            border-radius: 50%;
-        }
-
-        /* Toggle Icon (Visual Only) */
-        .theme-toggle {
-            color: #f0f6fc;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        /* Main Display Card */
-        .display-card {
-            background-color: #161b22;
-            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 2rem;
-            text-align: center;
-            border: 1px solid #30363d;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            min-height: 350px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
         }
         
-        .placeholder-icon {
-            font-size: 4rem;
-            color: #30363d;
-            margin-bottom: 1rem;
-        }
-        .placeholder-text {
-            color: #8b949e;
-            font-size: 0.9rem;
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
         }
 
-        /* Action Buttons Container */
-        .action-container {
+        /* Navbar Style */
+        .navbar {
             display: flex;
-            gap: 1rem;
             justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         
-        /* Custom Button Styling via Streamlit Widgets */
-        div.stButton > button {
-            background-color: #161b22;
-            color: #f0f6fc;
-            border: 1px solid #30363d;
-            border-radius: 20px;
-            height: 100px;
-            width: 100%;
-            font-weight: 600;
-            transition: all 0.2s;
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 10px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #5d6d7e;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        p {
+            color: #5d6d7e;
+        }
+
+        /* Custom Button Styling */
+        div.stButton > button {
+            background: linear-gradient(90deg, #66a6ff 0%, #89f7fe 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 166, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         div.stButton > button:hover {
-            background-color: #21262d;
-            border-color: #8b949e;
-            transform: translateY(-2px);
-        }
-        div.stButton > button:active {
-            transform: translateY(0);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 166, 255, 0.6);
+            color: white;
         }
 
-        /* Specific Button Colors (Simulated) */
-        /* Note: We can't target specific buttons easily without more complex CSS hacks, 
-           so we keep them uniform but premium. */
-        
-        /* Results Styles */
-        .result-stats {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(63, 185, 80, 0.1);
-            border-radius: 12px;
-            width: 100%;
-        }
-        .stat-item {
+        /* Results & Stats */
+        .metric-container {
             display: flex;
-            justify-content: space-between;
-            color: #f0f6fc;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+        .metric-label {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Logic & Helpers
+# Logic
 # -----------------------------
 @st.cache_resource
 def load_model():
-    # Use standard model if custom not found (removed hard dependency on specific path for stability)
     path = "runs/detect/train6/weights/best.pt"
     if os.path.exists(path):
         return YOLO(path)
-    return YOLO("yolov8n.pt") # Fallback
+    return YOLO("yolov8n.pt")
 
 model = load_model()
 
-# Initialize State
-if 'input_mode' not in st.session_state:
-    st.session_state.input_mode = None # 'gallery' or 'camera'
-
-if 'detected_image' not in st.session_state:
-    st.session_state.detected_image = None
-    
-if 'detection_results' not in st.session_state:
-    st.session_state.detection_results = None
-
-# Function to run inference
-def run_inference(image_source):
-    if isinstance(image_source, str):
-        img = Image.open(image_source)
-    elif isinstance(image_source, np.ndarray):
-        img = Image.fromarray(cv2.cvtColor(image_source, cv2.COLOR_BGR2RGB))
-    else:
-        img = image_source # PIL Image
-
-    results = model.predict(source=img, save=False, conf=0.25)
-    
-    # Plot results
-    res_plotted = results[0].plot()
-    st.session_state.detected_image = Image.fromarray(cv2.cvtColor(res_plotted, cv2.COLOR_BGR2RGB))
-    
-    # Store data
-    boxes = results[0].boxes
-    data = []
-    for box in boxes:
-        cls_id = int(box.cls)
-        name = model.names[cls_id]
-        conf = float(box.conf)
-        data.append((name, conf))
-    st.session_state.detection_results = data
-
 # -----------------------------
-# App Layout
+# UI Layout
 # -----------------------------
 
-# 1. Header
+# Navbar
 st.markdown("""
-<div class="header-container">
-    <div class="app-title-box">
-        <div class="app-icon">🛡️</div>
-        <div>
-            <div class="title-text">SpaceSafety AI</div>
-            <div class="subtitle-text">Secure Object Detection</div>
-            <div class="status-badge"><span class="status-dot"></span>SYSTEM ACTIVE</div>
+    <div class="navbar">
+        <div class="nav-logo">
+            <span>�️</span> SpaceSafety AI
+        </div>
+        <div class="nav-links">
+            <a href="#">Dashboard</a>
+            <a href="#">Analysis</a>
+            <a href="#">Reports</a>
+            <a href="#">System Status</a>
         </div>
     </div>
-    <div class="theme-toggle">☀️</div>
-</div>
 """, unsafe_allow_html=True)
 
-# 2. Main Display Area
-placeholder = st.empty()
+# Main Content Grid
+col_left, col_right = st.columns([1, 2], gap="large")
 
-# Determine content for main display
-if st.session_state.detected_image:
-    with placeholder.container():
-        st.markdown('<div class="display-card" style="padding: 0;">', unsafe_allow_html=True)
-        st.image(st.session_state.detected_image, use_container_width=True)
+with col_left:
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown("### 🎛️ Control Center")
+    st.write("Upload mission imagery for automated defect analysis.")
+    
+    tab1, tab2 = st.tabs(["📂 Upload File", "📸 Live Camera"])
+    
+    image_source = None
+    
+    with tab1:
+        uploaded_file = st.file_uploader("Choose an image", type=['jpg', 'png', 'jpeg'])
+        if uploaded_file:
+            image_source = Image.open(uploaded_file)
+            
+    with tab2:
+        cam_img = st.camera_input("Capture Feed")
+        if cam_img:
+            image_source = Image.open(cam_img)
+
+    st.markdown("---")
+    conf_threshold = st.slider("Confidence Threshold", 0.0, 1.0, 0.25, 0.05)
+    
+    if image_source:
+        st.success("Image Loaded Successfully")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Quick Stats (Placeholder)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown("### 📡 System Status")
+    st.markdown("**Model:** YOLOv8 Custom")
+    st.markdown("**Latency:** 45ms (Avg)")
+    st.markdown("**Active Nodes:** 4/4")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+with col_right:
+    st.markdown('<div class="glass-card" style="min-height: 500px;">', unsafe_allow_html=True)
+    st.markdown("### 👁️ Visual Analysis Feed")
+    
+    if image_source:
+        # Inference
+        results = model.predict(source=image_source, save=False, conf=conf_threshold)
         
-        # Stats Overlay
-        if st.session_state.detection_results:
-            st.markdown('<div class="result-stats">', unsafe_allow_html=True)
-            for name, conf in st.session_state.detection_results:
+        # Display Result
+        res_plotted = results[0].plot()
+        res_img = Image.fromarray(cv2.cvtColor(res_plotted, cv2.COLOR_BGR2RGB))
+        
+        st.image(res_img, use_container_width=True, caption="Processed Output")
+        
+        # Results Metrics
+        st.markdown("#### 📊 Detection Metrics")
+        
+        boxes = results[0].boxes
+        if len(boxes) > 0:
+            stats_cols = st.columns(3)
+            # Create metrics for first 3 detections max for display
+            detected_counts = {}
+            for box in boxes:
+                name = model.names[int(box.cls)]
+                detected_counts[name] = detected_counts.get(name, 0) + 1
+            
+            st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+            for name, count in detected_counts.items():
                 st.markdown(f"""
-                <div class="stat-item">
-                    <span>{name.upper()}</span>
-                    <span style="color: #3fb950; font-weight: bold;">{int(conf*100)}%</span>
+                <div class="metric-card">
+                    <div class="metric-value">{count}</div>
+                    <div class="metric-label">{name.upper()} Detected</div>
                 </div>
                 """, unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Close Button to reset
-        if st.button("❌ Close Scan", use_container_width=True):
-            st.session_state.detected_image = None
-            st.session_state.detection_results = None
-            st.rerun()
-
-else:
-    # Default State or Input Mode
-    with placeholder.container():
-        st.markdown('<div class="display-card">', unsafe_allow_html=True)
-        
-        if st.session_state.input_mode == 'gallery':
-            st.markdown("#### 📂 Select Image")
-            uploaded_file = st.file_uploader("", type=['jpg', 'png', 'jpeg'], label_visibility="collapsed")
-            if uploaded_file:
-                # Process upload
-                image = Image.open(uploaded_file)
-                run_inference(image)
-                st.rerun()
-                
-        elif st.session_state.input_mode == 'camera':
-            st.markdown("#### 📸 Capture")
-            cam_img = st.camera_input("Take photo", label_visibility="collapsed")
-            if cam_img:
-                image = Image.open(cam_img)
-                run_inference(image)
-                st.rerun()
-                
         else:
-            # Empty State
-            st.markdown("""
-                <div class="placeholder-icon">🖼️</div>
-                <div class="placeholder-text">Select a source below to begin scan</div>
-            """, unsafe_allow_html=True)
+            st.info("No anomalies detected in the current frame.")
             
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# 3. Action Buttons
-# Only show if not viewing a result (or allow switching)
-if not st.session_state.detected_image:
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("🖼️ Gallery", use_container_width=True):
-            st.session_state.input_mode = 'gallery'
-            st.rerun()
-    with c2:
-        if st.button("📸 Camera", use_container_width=True):
-            st.session_state.input_mode = 'camera'
-            st.rerun()
+    else:
+        # Empty State
+        st.markdown("""
+        <div style="text-align: center; padding: 100px 0; opacity: 0.5;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🖼️</div>
+            <h3>Waiting for Input</h3>
+            <p>Select an image from the Control Center to begin analysis.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown('</div>', unsafe_allow_html=True)
