@@ -388,66 +388,69 @@ with col_right:
         st.markdown('<div class="glass-card" style="min-height: 500px;">', unsafe_allow_html=True)
         st.markdown("### 👁️ Visual Analysis Feed")
         
+        # Process image without creating extra containers
         try:
-            with st.spinner("Processing image..."):
-                # 1. Resize Input for Processing/Display (Standard 16:9)
-                display_img = resize_16_9(image_source)
+            # Resize Input for Processing/Display (Standard 16:9)
+            display_img = resize_16_9(image_source)
+            
+            # Show processing message instead of spinner to avoid extra container
+            st.info("Processing image...")
+            
+            # Inference - use optimized settings for faster processing with fixed confidence threshold
+            results = model.predict(
+                source=display_img, 
+                save=False, 
+                conf=0.25,  # Fixed confidence threshold
+                imgsz=640,  # Standard size for faster inference
+                verbose=False  # Reduce output for speed
+            )
+            
+            # Filter out empty boxes and draw only valid ones
+            boxes = results[0].boxes
+            if len(boxes) > 0:
+                valid_boxes = filter_empty_boxes(boxes)
                 
-                # Inference - use optimized settings for faster processing with fixed confidence threshold
-                results = model.predict(
-                    source=display_img, 
-                    save=False, 
-                    conf=0.25,  # Fixed confidence threshold
-                    imgsz=640,  # Standard size for faster inference
-                    verbose=False  # Reduce output for speed
-                )
-                
-                # Filter out empty boxes and draw only valid ones
-                boxes = results[0].boxes
-                if len(boxes) > 0:
-                    valid_boxes = filter_empty_boxes(boxes)
-                    
-                    # Only draw boxes if we have valid ones
-                    if len(valid_boxes) > 0:
-                        # Manually draw only valid boxes to avoid empty boxes
-                        res_img = draw_boxes_on_image(display_img, boxes, model.names, 0.25)
-                    else:
-                        # No valid boxes, show original image
-                        res_img = display_img
+                # Only draw boxes if we have valid ones
+                if len(valid_boxes) > 0:
+                    # Manually draw only valid boxes to avoid empty boxes
+                    res_img = draw_boxes_on_image(display_img, boxes, model.names, 0.25)
                 else:
-                    # No boxes detected, show original image
+                    # No valid boxes, show original image
                     res_img = display_img
+            else:
+                # No boxes detected, show original image
+                res_img = display_img
+            
+            st.image(res_img, use_container_width=True, caption="Processed Output (16:9 Stream)")
+            
+            # Results Metrics
+            st.markdown("#### 📊 Detection Metrics")
+            
+            boxes = results[0].boxes
+            if len(boxes) > 0:
+                # Filter empty boxes before counting
+                valid_boxes = filter_empty_boxes(boxes)
                 
-                st.image(res_img, use_container_width=True, caption="Processed Output (16:9 Stream)")
-                
-                # Results Metrics
-                st.markdown("#### 📊 Detection Metrics")
-                
-                boxes = results[0].boxes
-                if len(boxes) > 0:
-                    # Filter empty boxes before counting
-                    valid_boxes = filter_empty_boxes(boxes)
+                if len(valid_boxes) > 0:
+                    detected_counts = {}
+                    for box in valid_boxes:
+                        cls_id = int(box.cls[0].cpu().numpy()) if hasattr(box.cls[0], 'cpu') else int(box.cls[0])
+                        name = model.names[cls_id]
+                        detected_counts[name] = detected_counts.get(name, 0) + 1
                     
-                    if len(valid_boxes) > 0:
-                        detected_counts = {}
-                        for box in valid_boxes:
-                            cls_id = int(box.cls[0].cpu().numpy()) if hasattr(box.cls[0], 'cpu') else int(box.cls[0])
-                            name = model.names[cls_id]
-                            detected_counts[name] = detected_counts.get(name, 0) + 1
-                        
-                        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
-                        for name, count in detected_counts.items():
-                            st.markdown(f"""
-                            <div class="metric-card">
-                                <div class="metric-value">{count}</div>
-                                <div class="metric-label">{name.upper()} Detected</div>
-                            </div>
-                            """, unsafe_allow_html=True)
-                        st.markdown('</div>', unsafe_allow_html=True)
-                    else:
-                        st.info("No valid detections found (empty boxes filtered out).")
+                    st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+                    for name, count in detected_counts.items():
+                        st.markdown(f"""
+                        <div class="metric-card">
+                            <div class="metric-value">{count}</div>
+                            <div class="metric-label">{name.upper()} Detected</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                 else:
-                    st.info("No anomalies detected in the current frame.")
+                    st.info("No valid detections found (empty boxes filtered out).")
+            else:
+                st.info("No anomalies detected in the current frame.")
         except Exception as e:
             st.error(f"Error processing image: {str(e)}")
             st.info("Please try uploading the image again.")
