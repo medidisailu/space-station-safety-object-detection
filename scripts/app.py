@@ -16,6 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # -----------------------------
 # Custom Styling (Glassmorphism Professional Website)
 # -----------------------------
@@ -24,12 +25,19 @@ st.markdown("""
         /* Import Font */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap');
         
-        /* Main Container Background - Light Sky Blue Gradient */
+        /* Main Container Background */
         .stApp {
             background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
             font-family: 'Outfit', sans-serif;
         }
 
+        /* Remove Extra Streamlit Whitespace */
+        .block-container {
+            padding-top: 1rem !important;
+            padding-bottom: 0rem !important;
+            max-width: 95% !important; /* Use more screen width */
+        }
+        
         /* Glassmorphism Classes */
         .glass-card {
             background: rgba(255, 255, 255, 0.65);
@@ -38,102 +46,49 @@ st.markdown("""
             -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem; /* Reduced padding */
+            margin-bottom: 1rem; /* Reduced margin */
             transition: all 0.3s ease;
         }
         
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
-        }
-
         /* Navbar Style */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
+            padding: 0.8rem 2rem;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 0 0 20px 20px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        /* ... existing styles ... */
+        .nav-logo { font-size: 1.5rem; font-weight: 700; color: #2c3e50; gap: 10px; display: flex; align-items: center; }
+        .nav-links a { text-decoration: none; color: #5d6d7e; margin-left: 20px; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #3498db; }
+        h1, h2, h3 { color: #2c3e50; margin-top: 0 !important; } /* Fix header margins */
+        p { color: #5d6d7e; }
         
-        .nav-links a {
-            text-decoration: none;
-            color: #5d6d7e;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover {
-            color: #3498db;
-        }
-
-        /* Typography */
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        p {
-            color: #5d6d7e;
-        }
-
-        /* Custom Button Styling */
         div.stButton > button {
             background: linear-gradient(90deg, #66a6ff 0%, #89f7fe 100%);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 166, 255, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
+            color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 12px; font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 166, 255, 0.4); width: 100%;
         }
-        div.stButton > button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(102, 166, 255, 0.6);
-            color: white;
-        }
-
-        /* Results & Stats */
-        .metric-container {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+        
+        .metric-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
         .metric-card {
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            flex: 1;
-            min-width: 140px;
-            text-align: center;
-            border: 1px solid rgba(0,0,0,0.05);
+            background: white; padding: 10px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex: 1; min-width: 100px;
+            text-align: center; border: 1px solid rgba(0,0,0,0.05);
         }
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #3498db;
-        }
-        .metric-label {
-            font-size: 0.85rem;
-            color: #95a5a6;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .metric-value { font-size: 1.2rem; font-weight: 700; color: #3498db; }
+        .metric-label { font-size: 0.7rem; color: #95a5a6; text-transform: uppercase; }
+        
+        /* Force Images to 16:9 Container feel if needed visually */
+        img { border-radius: 12px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -148,6 +103,20 @@ def load_model():
     return YOLO("yolov8n.pt")
 
 model = load_model()
+
+def resize_16_9(image):
+    """
+    Resizes an image to a 16:9 aspect ratio (1280x720) with padding to maintain clear aspect.
+    This ensures uniformity in the UI.
+    """
+    target_ratio = 16/9
+    target_width = 800
+    target_height = int(target_width / target_ratio) # 450
+    
+    # Use padding (expand) to ensure we don't crop out important details
+    # But fill the graphical space nicely.
+    return ImageOps.pad(image, (target_width, target_height), color=(255, 255, 255), centering=(0.5, 0.5))
+
 
 # -----------------------------
 # UI Layout
@@ -212,22 +181,27 @@ with col_right:
     st.markdown("### 👁️ Visual Analysis Feed")
     
     if image_source:
+        # 1. Resize Input for Processing/Display (Standard 16:9)
+        display_img = resize_16_9(image_source)
+        
         # Inference
-        results = model.predict(source=image_source, save=False, conf=conf_threshold)
+        # We run inference on the original source for accuracy, but display the resized/padded version
+        # OR we can run on the processed 16:9 version if we want the output box to match exactly.
+        # Let's run on the standardized 16:9 version to ensure visual alignment.
+        results = model.predict(source=display_img, save=False, conf=conf_threshold)
         
         # Display Result
         res_plotted = results[0].plot()
         res_img = Image.fromarray(cv2.cvtColor(res_plotted, cv2.COLOR_BGR2RGB))
         
-        st.image(res_img, use_container_width=True, caption="Processed Output")
+        st.image(res_img, use_container_width=True, caption="Processed Output (16:9 Stream)")
         
         # Results Metrics
         st.markdown("#### 📊 Detection Metrics")
         
         boxes = results[0].boxes
         if len(boxes) > 0:
-            stats_cols = st.columns(3)
-            # Create metrics for first 3 detections max for display
+            # ... existing metric code ...
             detected_counts = {}
             for box in boxes:
                 name = model.names[int(box.cls)]
